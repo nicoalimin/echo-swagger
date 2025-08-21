@@ -11,7 +11,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	swaggerFiles "github.com/swaggo/files/v2"
-	"github.com/swaggo/swag"
 	swagV2 "github.com/swaggo/swag/v2"
 	"sigs.k8s.io/yaml"
 )
@@ -116,7 +115,7 @@ func newConfig(configFns ...func(*Config)) *Config {
 	}
 
 	if config.InstanceName == "" {
-		config.InstanceName = swag.Name
+		config.InstanceName = "swagger"
 	}
 
 	return &config
@@ -171,13 +170,13 @@ func EchoWrapHandler(options ...func(*Config)) echo.HandlerFunc {
 			}()
 			return c.Stream(http.StatusOK, "text/html; charset=utf-8", pr)
 		case "doc.json":
-			doc, err := swag.ReadDoc(config.InstanceName)
+			doc, err := swagV2.ReadDoc(config.InstanceName)
 			if err != nil {
 				return c.String(http.StatusInternalServerError, err.Error())
 			}
 			return c.String(http.StatusOK, doc)
 		case "doc.yaml":
-			jsonString, err := swag.ReadDoc(config.InstanceName)
+			jsonString, err := swagV2.ReadDoc(config.InstanceName)
 			if err != nil {
 				return c.String(http.StatusInternalServerError, err.Error())
 			}
